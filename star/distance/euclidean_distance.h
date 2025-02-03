@@ -2,7 +2,7 @@
 // Copyright (c) 2025
 //
 // Author: 2450866102@qq.com
-// Date: 2025/2/2 20:20
+// Date: 2025/2/3 21:39
 // Description:
 //
 
@@ -12,9 +12,6 @@
 
 namespace star {
 
-struct Document {
-  std::vector<float> x;  // 返回的相似向量
-  // 其他扩展参数
-};
+float EuclideanDistance(const std::vector<float>& a, const std::vector<float>& b);
 
 }  // namespace star

@@ -12,10 +12,30 @@
 
 namespace star {
 
-struct Status {
-  int status_code;
-  std::string message;
+class Status {
+ public:
+  Status(int code, std::string message) : status_code_(code), message_(std::move(message)) {}
+
+  int Code() const {
+    return status_code_;
+  }
+
+  std::string Message() const {
+    return message_;
+  }
+
+  bool Ok() const {
+    return status_code_ == 0;
+  }
+
+ private:
+  int status_code_ = 0;
+  std::string message_;
   // 其他扩展参数
 };
+
+inline Status OkStatus() {
+  return {0, ""};
+}
 
 }  // namespace star

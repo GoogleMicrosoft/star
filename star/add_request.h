@@ -14,6 +14,18 @@
 namespace star {
 
 struct AddDocument {
+  bool operator<(const AddDocument& document) const {
+    if (this->vec.x.size() != document.vec.x.size()) {
+      return this->vec.x.size() < document.vec.x.size();
+    }
+    for (size_t i = 0; i < this->vec.x.size(); ++i) {
+      if (this->vec.x[i] != document.vec.x[i]) {
+        return this->vec.x[i] < document.vec.x[i];
+      }
+    }
+    return true;
+  }
+
   Document vec;
   // 其他扩展参数
 };

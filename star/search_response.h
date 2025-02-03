@@ -13,9 +13,14 @@
 
 namespace star {
 
+struct ResponseDocument {
+  Document document;
+  float similarity = 0.0;      // 和目标向量的相似度
+};
+
 class SearchResponse {
  public:
-  std::vector<Document> vecs;  // 返回的多个相似向量
+  std::vector<ResponseDocument> vecs;  // 返回的多个相似向量
 };
 
 }  // namespace star

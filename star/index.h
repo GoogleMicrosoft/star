@@ -19,6 +19,8 @@ namespace star {
 /// 索引基类定义
 class Index {
  public:
+  virtual ~Index() = default;
+
   /// 检索接口
   virtual SearchResponse Search(const SearchRequest& request) const = 0;
 
@@ -28,4 +30,5 @@ class Index {
   /// 删除向量接口
   virtual Status Delete(const DeleteRequest& request) = 0;
 };
+
 }  // namespace star
