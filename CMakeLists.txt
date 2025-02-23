@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(StarProject)
 
 # 设置 C++ 标准
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 查找当前目录及其子目录下的所有 .h 和 .cc 文件
