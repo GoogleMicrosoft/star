@@ -6,9 +6,9 @@
 // Description:
 //
 
-#include "gtest/gtest.h"
-#include "star/index.h"
 #include "star/impl/flat/flat_index.h"
+#include "star/index_factory.h"
+#include "gtest/gtest.h"
 
 #include <random>
 
@@ -18,7 +18,8 @@ std::vector<float> GenerateRandomVector(size_t dimension) {
   std::random_device rd;  // 用于生成种子
   std::mt19937 gen(rd()); // 使用Mersenne Twister引擎
   // 定义浮点数分布范围
-  std::uniform_real_distribution<float> dis(-10.0, 10.0); // 生成范围在-10.0到10.0之间的浮点数
+  std::uniform_real_distribution<float> dis(
+      -10.0, 10.0); // 生成范围在-10.0到10.0之间的浮点数
 
   std::vector<float> result;
   for (int i = 0; i < dimension; ++i) {
@@ -29,44 +30,51 @@ std::vector<float> GenerateRandomVector(size_t dimension) {
 }
 
 class SimpleIndexTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
-    index = new FlatIndex();
+    for (const auto &kItem : index_impl_names) {
+      auto index = IndexFactory::GetInstance()->Create(kItem);
+      EXPECT_NE(index, nullptr);
+      indexes.emplace_back(std::move(index));
+    }
   }
 
-  void TearDown() override {
-    delete index;
-  }
-
+  std::vector<std::string> index_impl_names = {"flat", "knn"};
+  std::vector<std::unique_ptr<Index>> indexes{};
   size_t vector_dimension = 10;
-  Index* index = nullptr;
 };
 
 TEST_F(SimpleIndexTest, SearchTest) {
-  SearchRequest request;
-  request.x = GenerateRandomVector(vector_dimension);
-  request.k = 5;
-  SearchResponse response = index->Search(request);
-  std::cout << "response:" << response.vecs.size() << std::endl;
-  EXPECT_LE(response.vecs.size(), request.k);
+  for (const auto &index : indexes) {
+    SearchRequest request;
+    request.x = GenerateRandomVector(vector_dimension);
+    request.k = 5;
+    SearchResponse response = index->Search(request);
+    std::cout << "response:" << response.vecs.size() << std::endl;
+    EXPECT_LE(response.vecs.size(), request.k);
+  }
 }
 
 TEST_F(SimpleIndexTest, AddTest) {
-  AddRequest request;
-  for (size_t i = 0; i < 100; ++i) {
-    AddDocument add_document;
-    add_document.vec.x = GenerateRandomVector(vector_dimension);
-    request.vecs.emplace_back(add_document);
+  for (const auto &index : indexes) {
+    AddRequest request;
+    for (size_t i = 0; i < 100; ++i) {
+      AddDocument add_document;
+      add_document.vec.x = GenerateRandomVector(vector_dimension);
+      request.vecs.emplace_back(add_document);
+    }
+    Status status = index->Add(request);
+    EXPECT_TRUE(status.Ok());
   }
-  Status status = index->Add(request);
-  EXPECT_TRUE(status.Ok());
 }
 
 TEST_F(SimpleIndexTest, DeleteTest) {
-  DeleteRequest request;
-  // 待删除的是空向量
-  Status status = index->Delete(request);
-  EXPECT_FALSE(status.Ok());
+  for (const auto &index : indexes) {
+    DeleteRequest request;
+    // 待删除的是空向量
+    Status status = index->Delete(request);
+    EXPECT_FALSE(status.Ok());
+  }
 }
 
-}  // namespace star
+} // namespace star

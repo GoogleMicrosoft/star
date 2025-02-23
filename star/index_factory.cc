@@ -8,6 +8,7 @@
 
 #include "index_factory.h"
 #include "impl/flat/flat_index.h"
+#include "impl/knn/knn_index.h"
 
 namespace star {
 

@@ -2,10 +2,8 @@
 // Copyright (c) 2025
 //
 // Author: 2450866102@qq.com
-// Date: 2025/2/23 21:06
+// Date: 2025/2/23 22:41
 // Description:
 //
 
-#pragma once
-
-class KnnIndex {};
+#include "kd_node.h"
