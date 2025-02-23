@@ -8,7 +8,7 @@
 
 #include "gtest/gtest.h"
 #include "star/index.h"
-#include "star/impl/brute_force/brute_force_index.h"
+#include "star/impl/flat/flat_index.h"
 
 #include <random>
 
@@ -32,7 +32,7 @@ class SimpleIndexTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // 在每个测试之前设置
-    index = new BruteForceIndex();
+    index = new FlatIndex();
   }
 
   void TearDown() override {
@@ -40,12 +40,13 @@ class SimpleIndexTest : public ::testing::Test {
     delete index;
   }
 
+  size_t vector_dimension = 10;
   Index* index = nullptr;
 };
 
 TEST_F(SimpleIndexTest, SearchTest) {
   SearchRequest request;
-  request.x = GenerateRandomVector(10);
+  request.x = GenerateRandomVector(vector_dimension);
   request.k = 5;
   SearchResponse response = index->Search(request);
   EXPECT_LE(response.vecs.size(), request.k);
@@ -53,6 +54,11 @@ TEST_F(SimpleIndexTest, SearchTest) {
 
 TEST_F(SimpleIndexTest, AddTest) {
   AddRequest request;
+  for (size_t i = 0; i < 100; ++i) {
+    AddDocument add_document;
+    add_document.vec.x = GenerateRandomVector(vector_dimension);
+    request.vecs.emplace_back(add_document);
+  }
   Status status = index->Add(request);
   EXPECT_TRUE(status.Ok());
 }

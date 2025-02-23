@@ -13,8 +13,11 @@
 
 namespace star {
 
-class BruteForceIndex final : public Index {
+class FlatIndex final : public Index {
  public:
+  explicit FlatIndex(size_t vector_count_limit = 10000) : vector_count_limit_(
+      vector_count_limit) {}
+
   /// 检索接口
   SearchResponse Search(const SearchRequest& request) const override;
 

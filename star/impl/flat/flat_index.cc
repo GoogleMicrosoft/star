@@ -6,13 +6,13 @@
 // Description:
 //
 
-#include "star/impl/brute_force/brute_force_index.h"
+#include "star/impl/flat/flat_index.h"
 #include "star/distance/euclidean_distance.h"
 
 namespace star {
 
 /// 检索接口
-SearchResponse BruteForceIndex::Search(const SearchRequest& request) const {
+SearchResponse FlatIndex::Search(const SearchRequest& request) const {
   SearchResponse response;
   std::vector<std::pair<const AddDocument*, float>> candidate_vectors;
   for (const auto& kVector: vectors_) {
@@ -36,7 +36,7 @@ SearchResponse BruteForceIndex::Search(const SearchRequest& request) const {
 }
 
 /// 添加向量接口
-Status BruteForceIndex::Add(const AddRequest& request) {
+Status FlatIndex::Add(const AddRequest& request) {
   auto remaining_capacity = vectors_.size() - vector_count_limit_;
   if (vectors_.size() - vector_count_limit_ < request.vecs.size()) {
     return {-1, "remaining capacity " + std::to_string(remaining_capacity) + ", can not add"};
@@ -48,7 +48,7 @@ Status BruteForceIndex::Add(const AddRequest& request) {
 }
 
 /// 删除向量接口
-Status BruteForceIndex::Delete(const DeleteRequest& request) {
+Status FlatIndex::Delete(const DeleteRequest& request) {
   return OkStatus();
 }
 
