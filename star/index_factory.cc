@@ -7,24 +7,25 @@
 //
 
 #include "index_factory.h"
+
+#include "impl/ann/kd_tree_index.h"
 #include "impl/flat/flat_index.h"
-#include "impl/knn/knn_index.h"
 
 namespace star {
 
-const IndexFactory *IndexFactory::GetInstance() {
+const IndexFactory* IndexFactory::GetInstance() {
   static IndexFactory factory;
   return &factory;
 }
 
-std::unique_ptr<Index> IndexFactory::Create(const std::string &name) const {
+std::unique_ptr<Index> IndexFactory::Create(const std::string& name) const {
   if (name == "flat") {
     return std::make_unique<FlatIndex>();
   }
-  if (name == "knn") {
-    return std::make_unique<KnnIndex>()
+  if (name == "kd_tree") {
+    return std::make_unique<KDTreeIndex>()
   }
   return nullptr;
 }
 
-} // namespace star
+}  // namespace star
