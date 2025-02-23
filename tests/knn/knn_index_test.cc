@@ -31,12 +31,10 @@ std::vector<float> GenerateRandomVector(size_t dimension) {
 class SimpleIndexTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    // 在每个测试之前设置
     index = new FlatIndex();
   }
 
   void TearDown() override {
-    // 在每个测试之后清理
     delete index;
   }
 
@@ -49,6 +47,7 @@ TEST_F(SimpleIndexTest, SearchTest) {
   request.x = GenerateRandomVector(vector_dimension);
   request.k = 5;
   SearchResponse response = index->Search(request);
+  std::cout << "response:" << response.vecs.size() << std::endl;
   EXPECT_LE(response.vecs.size(), request.k);
 }
 
@@ -65,8 +64,9 @@ TEST_F(SimpleIndexTest, AddTest) {
 
 TEST_F(SimpleIndexTest, DeleteTest) {
   DeleteRequest request;
+  // 待删除的是空向量
   Status status = index->Delete(request);
-  EXPECT_TRUE(status.Ok());
+  EXPECT_FALSE(status.Ok());
 }
 
 }  // namespace star

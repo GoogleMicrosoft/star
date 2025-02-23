@@ -20,10 +20,13 @@ SearchResponse FlatIndex::Search(const SearchRequest& request) const {
     candidate_vectors.emplace_back(&kVector, distance);
   }
   if (request.k < candidate_vectors.size()) {
-    std::sort(candidate_vectors.begin(),
-              candidate_vectors.end(),
-              [](const std::pair<const AddDocument*, float>& a,
-                 const std::pair<const AddDocument*, float>& b) { return a.second > b.second; });
+    std::partial_sort(candidate_vectors.begin(),
+                      candidate_vectors.begin() + request.k,
+                      candidate_vectors.end(),
+                      [](const std::pair<const AddDocument*, float>& a,
+                         const std::pair<const AddDocument*, float>& b) {
+                        return a.second > b.second;
+                      });
     candidate_vectors.resize(request.k);
   }
   for (const auto& item: candidate_vectors) {
@@ -37,8 +40,8 @@ SearchResponse FlatIndex::Search(const SearchRequest& request) const {
 
 /// 添加向量接口
 Status FlatIndex::Add(const AddRequest& request) {
-  auto remaining_capacity = vectors_.size() - vector_count_limit_;
-  if (vectors_.size() - vector_count_limit_ < request.vecs.size()) {
+  auto remaining_capacity =  vector_count_limit_ - vectors_.size();
+  if (remaining_capacity  < request.vecs.size()) {
     return {-1, "remaining capacity " + std::to_string(remaining_capacity) + ", can not add"};
   }
   for (const auto& kVec: request.vecs) {
@@ -49,6 +52,11 @@ Status FlatIndex::Add(const AddRequest& request) {
 
 /// 删除向量接口
 Status FlatIndex::Delete(const DeleteRequest& request) {
+  if (vectors_.find(request.x) == vectors_.end()) {
+    // 没有找到待删除向量
+    return {-2, "Can not found the vector"};
+  }
+  vectors_.erase(request.x);
   return OkStatus();
 }
 
