@@ -23,7 +23,7 @@ std::unique_ptr<Index> IndexFactory::Create(const std::string& name) const {
     return std::make_unique<FlatIndex>();
   }
   if (name == "kd_tree") {
-    return std::make_unique<KDTreeIndex>();
+    return std::make_unique<KDTreeIndex>(10);
   }
   return nullptr;
 }
