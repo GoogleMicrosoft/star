@@ -1,0 +1,11 @@
+.vscode/
+bazel-*
+*.swp
+*.o
+*.log
+*.so
+*.a
+*.dylib
+CMakeCache.txt                                                                                                                                           
+CMakeFiles
+CMakeScripts

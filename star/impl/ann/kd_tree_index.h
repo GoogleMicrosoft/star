@@ -13,7 +13,7 @@
 #include <limits>
 #include <memory>
 #include <queue>
-#include <vector>
+#include <vector> 
 
 #include "star/distance/euclidean_distance.h"
 #include "star/impl/ann/kd_node.h"
