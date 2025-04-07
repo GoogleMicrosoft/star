@@ -6,6 +6,8 @@
 // Description:
 //
 
+#include <algorithm>
+
 #include "star/impl/flat/flat_index.h"
 #include "star/distance/euclidean_distance.h"
 

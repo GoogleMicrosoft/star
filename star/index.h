@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include "add_request.h"
+#include "delete_request.h"
 #include "search_request.h"
 #include "search_response.h"
 #include "status.h"
-#include "add_request.h"
-#include "delete_request.h"
 
 namespace star {
 

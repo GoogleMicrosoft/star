@@ -25,7 +25,7 @@ IncludeCategories:
   - Regex: '<([A-Za-z0-9\/-_])+>'
     Priority: 2
   # Headers in <> from specific external libraries.
-  - Regex: '<(boost|google|gtest|gmock|isl|json|rapidjson|gflags)/.*>'
+  - Regex: "<(boost|google|gtest|gmock|isl|json|rapidjson|gflags)/.*>"
     Priority: 3
   # Headers in "" from specific external libraries.
   - Regex: '^(<|"(trpc|servant|promise|util|wsd|dcache|yaml-cpp|boost|google|gtest|gmock|isl|json|rapidjson|gflags|ispine|jce)/)'

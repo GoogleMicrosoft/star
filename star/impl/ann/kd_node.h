@@ -13,15 +13,14 @@
 
 namespace star {
 
-struct KDNode {
-  //  int id;                        // 向量ID
-  std::vector<float> vector;      // 向量数据
-  int axis;                       // 当前节点的划分轴
-  std::unique_ptr<KDNode> left;   // 左子节点
-  std::unique_ptr<KDNode> right;  // 右子节点
+struct Node {
+  std::vector<double> coordinates;
+  int id;
+  std::unique_ptr<Node> left;
+  std::unique_ptr<Node> right;
 
-  KDNode(const std::vector<float>& vector, int axis)
-      : vector(vector), axis(axis), left(nullptr), right(nullptr) {}
+  Node(const std::vector<double>& coords, int id)
+      : coordinates(coords), id(id), left(nullptr), right(nullptr) {}
 };
 
 }  // namespace star
