@@ -10,17 +10,17 @@
 
 namespace star {
 
-KDTreeIndex::KDTreeIndex(int dimension) : dimension_(dimension), root_(nullptr) {}
+KDTreeIndex::KDTreeIndex(int dimension) : root_(nullptr),  dimension_(dimension) {}
 
-double KDTreeIndex::Distance(const std::vector<double>& a, const std::vector<double>& b) const {
-    double dist = 0.0;
+float KDTreeIndex::Distance(const std::vector<float>& a, const std::vector<float>& b) const {
+    float dist = 0.0;
     for (size_t i = 0; i < dimension_; ++i) {
         dist += (a[i] - b[i]) * (a[i] - b[i]);
     }
     return dist;
 }
 
-std::unique_ptr<KDTreeIndex::Node> KDTreeIndex::InsertHelper(KDTreeIndex::Node* node, const std::vector<double>& point, int depth) {
+std::unique_ptr<Node> KDTreeIndex::InsertHelper(Node* node, const std::vector<float>& point, int depth) {
     if (!node) {
         return std::make_unique<Node>(point, point.size());
     }
@@ -35,7 +35,7 @@ std::unique_ptr<KDTreeIndex::Node> KDTreeIndex::InsertHelper(KDTreeIndex::Node* 
     return std::unique_ptr<Node>(node);
 }
 
-std::optional<KDTreeIndex::Node*> KDTreeIndex::FindHelper(KDTreeIndex::Node* node, int id) const {
+std::optional<Node*> KDTreeIndex::FindHelper(Node* node, int id) const {
     if (!node) {
         return std::nullopt;
     }
@@ -52,20 +52,20 @@ std::optional<KDTreeIndex::Node*> KDTreeIndex::FindHelper(KDTreeIndex::Node* nod
     return FindHelper(node->right.get(), id);
 }
 
-KDTreeIndex::Node* KDTreeIndex::NearestNeighborHelper(KDTreeIndex::Node* node, const std::vector<double>& query, KDTreeIndex::Node* best_node, double& best_dist, int depth) const {
+Node* KDTreeIndex::NearestNeighborHelper(Node* node, const std::vector<float>& query, Node* best_node, float& best_dist, int depth) const {
     if (!node) {
         return best_node;
     }
 
     int axis = depth % dimension_;
-    double dist = (query, node->coordinates);
+    float dist = Distance(query, node->coordinates);
 
     if (dist < best_dist) {
         best_dist = dist;
         best_node = node;
     }
 
-    KDTreeIndex::Node* next_branch = nullptr;
+    Node* next_branch = nullptr;
     if (query[axis] < node->coordinates[axis]) {
         next_branch = NearestNeighborHelper(node->left.get(), query, best_node, best_dist, depth + 1);
     } else {
@@ -89,32 +89,35 @@ SearchResponse KDTreeIndex::Search(const SearchRequest& request) const {
         return response;
     }
 
-    double best_dist = std::numeric_limits<double>::max();
-    Node* best_node = NearestNeighborHelper(root_.get(), request.query_vector, nullptr, best_dist, 0);
+    float best_dist = std::numeric_limits<float>::max();
+    Node* best_node = NearestNeighborHelper(root_.get(), request.x, nullptr, best_dist, 0);
     if (best_node) {
-        response.id = best_node->id;
-        response.distance = best_dist;
+        // response.id = best_node->id;
+        // response.distance = best_dist;
     }
     return response;
 }
 
 Status KDTreeIndex::Add(const AddRequest& request) {
-    root_ = InsertHelper(root_.get(), request.vector, 0);
+    for (const auto& x : request.vecs.vec.x) {
+            root_ = InsertHelper(root_.get(), x, 0);
+    }
     return OkStatus();
 }
 
 Status KDTreeIndex::Delete(const DeleteRequest& request) {
-    auto node_to_delete = FindHelper(root_.get(), request.id);
-    if (!node_to_delete) {
+    // auto node_to_delete = FindHelper(root_.get(), request.x.vec.x.size());
+    auto node_to_delete = FindHelper(nullptr, 1);
+    if (!node_to_delete.has_value()) {
         return {-1, "Vector with ID not found"};
     }
 
     // Simple deletion logic: set the node to nullptr (not efficient for large trees)
-    if (node_to_delete->left) {
-        node_to_delete->left.reset();
+    if (node_to_delete.value()->left) {
+        node_to_delete.value()->left.reset();
     }
-    if (node_to_delete->right) {
-        node_to_delete->right.reset();
+    if (node_to_delete.value()->right) {
+        node_to_delete.value()->right.reset();
     }
     return OkStatus();
 }

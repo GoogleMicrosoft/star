@@ -1,0 +1,5 @@
+build --cxxopt="--std=c++17"
+build --copt=-O2
+# build --copt=-g --strip=never
+#build --jobs 64
+#build --incompatible_disable_deprecated_attr_params=false --incompatible_new_actions_api=false --incompatible_no_support_tools_in_action_inputs=false

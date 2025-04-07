@@ -30,13 +30,13 @@ class KDTreeIndex : public Index {
     Status Delete(const DeleteRequest& request) override;
 
  private:
-    std::unique_ptr<Node> root_;
-    int dimension_;
+    std::unique_ptr<Node> root_ = nullptr;
+    int dimension_ = -1;
 
-    std::unique_ptr<Node> InsertHelper(Node* node, const std::vector<double>& point, int depth);
+    std::unique_ptr<Node> InsertHelper(Node* node, const std::vector<float>& point, int depth);
     std::optional<Node*> FindHelper(Node* node, int id) const;
-    Node* NearestNeighborHelper(Node* node, const std::vector<double>& query, Node* best_node, double& best_dist, int depth) const;
-    double Distance(const std::vector<double>& a, const std::vector<double>& b) const;
+    Node* NearestNeighborHelper(Node* node, const std::vector<float>& query, Node* best_node, float& best_dist, int depth) const;
+    float Distance(const std::vector<float>& a, const std::vector<float>& b) const;
 };
 
 }  // namespace star

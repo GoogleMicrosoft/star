@@ -14,12 +14,12 @@
 namespace star {
 
 struct Node {
-  std::vector<double> coordinates;
+  std::vector<float> coordinates;
   int id;
   std::unique_ptr<Node> left;
   std::unique_ptr<Node> right;
 
-  Node(const std::vector<double>& coords, int id)
+  Node(const std::vector<float>& coords, int id)
       : coordinates(coords), id(id), left(nullptr), right(nullptr) {}
 };
 
